@@ -1,3 +1,7 @@
+[![npm](http://img.shields.io/npm/v/sparga.svg)](https://www.npmjs.org/package/sparga)
+[![travis](https://travis-ci.org/rollercodester/sparga.svg?branch=master)](https://travis-ci.org/rollercodester/sparga)
+[![Dependency Status](https://david-dm.org/rollercodester/sparga.svg)](https://david-dm.org/rollercodester/sparga)
+
 # SPARGA!
 
 **S**ingle-**P**age **A**pplication **R**elay for **G**oogle **A**nalytics
