@@ -1,6 +1,6 @@
 {
   "name": "sparga",
-  "version": "0.1.1",
+  "version": "0.1.19",
   "description": "A convenience library for SPAs that use Google Analytics.",
   "main": "dist/sparga.min.js",
   "scripts": {
@@ -30,9 +30,7 @@
     "simple",
     "convenient"
   ],
-  "dependencies": {
-    "history": "^4.7.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",

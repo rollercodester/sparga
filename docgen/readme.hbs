@@ -14,11 +14,11 @@
 
 * [Installation](#installation)
 * [Examples](#examples)
-    * [Quick Start](#example1)
-    * [Automatic click-streaming](#example2)
-    * [Custom dimensions](#example3)
-    * [Custom metrics](#example4)
-    * [Native GA Settings (e.g. custom tracker)](#example5)
+   * [Quick Start](#example1)
+   * [Automatic click-streaming](#example2)
+   * [Custom dimensions](#example3)
+   * [Custom metrics](#example4)
+   * [Native GA Settings (e.g. custom tracker)](#example5)
 * [API Reference](#api)
 
 <a name="installation"></a>
@@ -60,8 +60,8 @@ sparga.init('UA-123456-7')
 const sparga = new Sparga()
 
 sparga.init({
-    gaSettings: 'UA-123456-7',
-    autoCaptureClickEvents: true
+   gaSettings: 'UA-123456-7',
+   autoCaptureClickEvents: true
 })
 
 //
@@ -78,21 +78,21 @@ sparga.init({
 const sparga = new Sparga()
 
 sparga.init({
-    gaSettings: 'UA-123456-7',
-    //
-    // your dimension map will likely be governed
-    // by a central team as GA only allows a limited
-    // number of custom dimensions, depending on your
-    // account type...as such, this map is usually
-    // defined once and use many times for an organiation
-    //
-    // For more info, see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs
-    //
-    dimensionMap: {
-        variantTestName: 'dimension1',
-        variantTestSampling: 'dimension9',
-        userRole: 'dimension17'
-    }
+   gaSettings: 'UA-123456-7',
+   //
+   // your dimension map will likely be governed
+   // by a central team as GA only allows a limited
+   // number of custom dimensions, depending on your
+   // account type...as such, this map is usually
+   // defined once and use many times for an organiation
+   //
+   // For more info, see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs
+   //
+   dimensionMap: {
+      variantTestName: 'dimension1',
+      variantTestSampling: 'dimension9',
+      userRole: 'dimension17'
+   }
 })
 
 sparga.setDimension('variantTestName', 'Variant Testing for Our Exciting New Feature')
@@ -108,21 +108,21 @@ sparga.setDimension('userRole', 'non-admin')
 const sparga = new Sparga()
 
 sparga.init({
-    gaSettings: 'UA-123456-7',
-    //
-    // your metric map will likely be governed
-    // by a central team as GA only allows a limited
-    // number of custom metrics, depending on your
-    // account type...as such, this map is usually
-    // defined once and use many times for an organiation
-    //
-    // For more info, see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs
-    //
-    metricMap: {
-        isNewUser: 'metric6',
-        isUserAdmin: 'metric8',
-        isViewSetAsPersistent: 'metric14'
-    }
+   gaSettings: 'UA-123456-7',
+   //
+   // your metric map will likely be governed
+   // by a central team as GA only allows a limited
+   // number of custom metrics, depending on your
+   // account type...as such, this map is usually
+   // defined once and use many times for an organiation
+   //
+   // For more info, see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs
+   //
+   metricMap: {
+      isNewUser: 'metric6',
+      isUserAdmin: 'metric8',
+      isViewSetAsPersistent: 'metric14'
+   }
 })
 
 sparga.setMetric('isNewUser', 1)
@@ -140,15 +140,15 @@ All native options for creating a GA tracking session are exposed via the gaSett
 const sparga = new Sparga()
 
 sparga.init({
-    gaSettings: {
-        trackingId: 'UA-123456-7',
-        name: 'My Tracker'
-    },
-    metricMap: {
-        isNewUser: 'metric6',
-        isUserAdmin: 'metric8',
-        isViewSetAsPersistent: 'metric14'
-    }
+   gaSettings: {
+      trackingId: 'UA-123456-7',
+      name: 'My Tracker'
+   },
+   metricMap: {
+      isNewUser: 'metric6',
+      isUserAdmin: 'metric8',
+      isViewSetAsPersistent: 'metric14'
+   }
 })
 
 //
@@ -159,7 +159,19 @@ sparga.setMetric('isUserAdmin', 0)
 sparga.setMetric('isViewSetAsPersistent', 1)
 ```
 
-### Other Helper Functions
+## Default GA Settings
+
+Sparga sets the following GA settings by default, which are different than the defaults that GA applies. As with all settings, these are overridable by passing in the respective key-value pairs on the gaSettings property of the options object.
+
+* allowAnchor: false
+* alwaysSendReferrer: true
+* forceSSL: true
+* cookieDomain: 'auto'
+* siteSpeedSampleRate: 100
+* storeGac: false
+
+
+## Other Helper Functions
 
 * sendEvent
 * sendException

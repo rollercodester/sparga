@@ -1,10 +1,10 @@
 {
   "presets": [
-    "es2015"
+   "es2015"
   ],
   "env": {
-    "production": {
-      "presets": ["minify"]
-    }
+   "production": {
+     "presets": ["minify"]
+   }
   }
 }
