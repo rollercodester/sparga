@@ -1,8 +1,10 @@
 # SPARGA!
-#### Are you a Spargan?
-##### You can be if you need to relay hits from your single-page application to Google Analytics!
 
-**[S]**ingle-**[P]**age **[A]**pplication **[R]**elay for **[G]**oogle **[A]**nalytics
+**S**ingle-**P**age **A**pplication **R**elay for **G**oogle **A**nalytics
+
+### Are you a Spargan?
+
+#### You can be if you need to relay hits from your single-page application to Google Analytics.
 
 ## Index
 
@@ -14,10 +16,6 @@
     * [Custom metrics](#example4)
     * [Native GA Settings (e.g. custom tracker)](#example5)
 * [API Reference](#api)
-
-<p>
-A very simple, convenience library for SPAs that use Google Analytics.
-</p>
 
 <a name="installation"></a>
 ## Installation
@@ -34,7 +32,6 @@ npm install --save sparga
 ```javascript
 // for ES6 clients
 import Sparga from 'sparga'
-
 // for non-ES6 clients
 const Sparga = require('sparga').default
 
@@ -49,12 +46,10 @@ sparga.init('UA-123456-7')
 // Additionally, all unhandled JavaScript
 // exceptions will also be tracked.
 //
-// Yes, it's really that easy!
-//
 ```
 
 <a name="example2"></a>
-## Automatic click-stream handling
+### Automatic click-stream handling
 
 ```javascript
 
@@ -72,7 +67,7 @@ sparga.init({
 ```
 
 <a name="example3"></a>
-## Setting custom dimensions using developer friendly logical names
+### Setting custom dimensions using developer friendly logical names
 
 ```javascript
 
@@ -102,7 +97,7 @@ sparga.setDimension('userRole', 'non-admin')
 ```
 
 <a name="example4"></a>
-## Setting custom metrics using developer friendly logical names
+### Setting custom metrics using developer friendly logical names
 
 ```javascript
 
@@ -132,7 +127,7 @@ sparga.setMetric('isViewSetAsPersistent', 1)
 ```
 
 <a name="example5"></a>
-## Using native GA settings
+### Using native GA settings
 
 All native options for creating a GA tracking session are exposed via the gaSettings property on Sparga's intitialization object. The following example shows how to create a custom tracker by initializing with a gaSettings object.
 
@@ -159,6 +154,16 @@ sparga.setMetric('isNewUser', 1)
 sparga.setMetric('isUserAdmin', 0)
 sparga.setMetric('isViewSetAsPersistent', 1)
 ```
+
+### Other Helper Functions
+
+* sendEvent
+* sendException
+* sendSocial
+* sendTiming
+
+Refer to the following API section for more details.
+
 
 <a name="api"></a>
 ## API Reference

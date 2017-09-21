@@ -10,7 +10,17 @@
     "pretest": "npm run build",
     "test": "mocha"
   },
-  "author": "rollercodester",
+  "author": "Ryan Howard @rollercodester",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rollercodester/sparga.git"
+  },
+  "maintainers": [
+    "Ryan Howard (https://github.com/rollercodester)"
+  ],
+  "contributors": [
+    "Ryan Howard (https://github.com/rollercodester)"
+  ],
   "license": "ISC",
   "keywords": [
     "Google Analytics",
