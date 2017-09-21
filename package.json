@@ -1,10 +1,10 @@
 {
   "name": "sparga",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "A convenience library for SPAs that use Google Analytics.",
   "main": "dist/sparga.min.js",
   "scripts": {
-    "docs": "jsdoc2md -d 1 -t docgen/readme.hbs src/index.js > README.md",
+    "docs": "jsdoc2md -d 1 -t docgen/api.hbs src/index.js > API.md",
     "build": "cross-env NODE_ENV=production babel src/index.js --out-file dist/sparga.min.js",
     "pretest": "npm run build",
     "test": "mocha"
