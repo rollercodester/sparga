@@ -1,6 +1,3 @@
-import createHistory from 'history/createBrowserHistory'
-
-
 /**
  * @exports sparga
  * @typicalname sparga
@@ -125,22 +122,13 @@ export default class Sparga {
          if (!window.ga) {
 
             this.__initGa()
-            this.__initHistoryListener()
 
             //
             // initialize GA (one-time only)
             //
             window.ga('create', gaSettings)
 
-            //
-            // since the initial load of a SPA
-            // won't trigger a pushState, go
-            // ahead and send a pageview hit
-            //
-            window.ga(this.sendCommand, {
-               hitType: 'pageview',
-               page: location.pathname
-            })
+            this.__initHistoryListener()
 
          }
 
@@ -406,6 +394,16 @@ export default class Sparga {
    __initHistoryListener() {
 
       const ref = this
+
+      //
+      // since the initial load of a SPA
+      // won't trigger a pushState, go
+      // ahead and send a pageview hit
+      //
+      window.ga(this.sendCommand, {
+         hitType: 'pageview',
+         page: location.pathname
+      })
 
       //
       // monkey-patch pushState to create a history listener

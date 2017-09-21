@@ -52,7 +52,6 @@ describe('sparga', function() {
 
          })
 
-
       })
 
       it('should throw if gaSettings property is missing when initializing with object literal', function() {
