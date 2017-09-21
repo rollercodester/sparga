@@ -2,9 +2,7 @@
 #### Are you a Spargan?
 ##### You can be if you need to relay hits from your single-page application to Google Analytics!
 
-<p>
 **[S]**ingle-**[P]**age **[A]**pplication **[R]**elay for **[G]**oogle **[A]**nalytics
-</p>
 
 ## Index
 
