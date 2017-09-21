@@ -87,7 +87,7 @@ sparga.init({
    // by a central team as GA only allows a limited
    // number of custom dimensions, depending on your
    // account type...as such, this map is usually
-   // defined once and use many times for an organiation
+   // defined once and used many times for an organization
    //
    // For more info, see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs
    //
@@ -117,7 +117,7 @@ sparga.init({
    // by a central team as GA only allows a limited
    // number of custom metrics, depending on your
    // account type...as such, this map is usually
-   // defined once and use many times for an organiation
+   // defined once and used many times for an organization
    //
    // For more info, see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs
    //
