@@ -2,7 +2,7 @@
 [![travis](https://travis-ci.org/rollercodester/sparga.svg?branch=master)](https://travis-ci.org/rollercodester/sparga)
 [![Dependency Status](https://david-dm.org/rollercodester/sparga.svg)](https://david-dm.org/rollercodester/sparga)
 
-# SPARGA!
+![sparga](https://user-images.githubusercontent.com/1450389/30691215-e68697de-9e7b-11e7-8d7c-a7a6e7c4d34c.jpg)
 
 **S**ingle-**P**age **A**pplication **R**elay for **G**oogle **A**nalytics
 

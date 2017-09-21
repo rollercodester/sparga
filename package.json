@@ -1,6 +1,6 @@
 {
   "name": "sparga",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "description": "A convenience library for SPAs that use Google Analytics.",
   "main": "dist/sparga.min.js",
   "scripts": {
