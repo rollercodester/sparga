@@ -9,27 +9,27 @@
 
 <dl>
 <dt><a href="#init">init(options)</a></dt>
-<dd><p>Initializes a tracker in GA and wires-up automated features of Sparga.</p>
+<dd><p>Initializes one or more trackers in GA and wires-up automated features of Sparga.</p>
 </dd>
 <dt><a href="#send">send()</a></dt>
 <dd><p>Pass-thru method for the GA send command. For method signature, see <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send">https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send</a></p>
 </dd>
-<dt><a href="#sendEvent">sendEvent(category, action, label, value)</a></dt>
+<dt><a href="#sendEvent">sendEvent(category, action, label, value, [trackerNames])</a></dt>
 <dd><p>Helper method to send a hit of type &quot;event&quot; to GA.</p>
 </dd>
-<dt><a href="#sendException">sendException(errMessage, wasFatal)</a></dt>
+<dt><a href="#sendException">sendException(errMessage, wasFatal, [trackerNames])</a></dt>
 <dd><p>Helper method to send a hit of type &quot;exception&quot; to GA.</p>
 </dd>
-<dt><a href="#sendSocial">sendSocial(network, action, target)</a></dt>
+<dt><a href="#sendSocial">sendSocial(network, action, target, [trackerNames])</a></dt>
 <dd><p>Helper method to send a hit of type &quot;social&quot; to GA.</p>
 </dd>
-<dt><a href="#sendTiming">sendTiming(category, variable, label, startOrDuration, [stop])</a></dt>
+<dt><a href="#sendTiming">sendTiming(category, variable, label, startOrDuration, [stop], [trackerNames])</a></dt>
 <dd><p>Helper method to send a hit of type &quot;timing&quot; to GA.</p>
 </dd>
-<dt><a href="#setDimension">setDimension(name, value)</a></dt>
+<dt><a href="#setDimension">setDimension(name, value, [trackerNames])</a></dt>
 <dd><p>Helper method to set a custom dimension in GA.</p>
 </dd>
-<dt><a href="#setMetric">setMetric(name, value)</a></dt>
+<dt><a href="#setMetric">setMetric(name, value, [trackerNames])</a></dt>
 <dd><p>Helper method to set a custom metric in GA.</p>
 </dd>
 </dl>
@@ -39,6 +39,9 @@
 <dl>
 <dt><a href="#GASettings">GASettings</a> : <code>object</code></dt>
 <dd><p>Google Analytics settings object that determines values set at creation time for tracker fields. Although all fields are supported, only a subset are specified here, particularly those where Sparga defaults to a different value than Google does. See <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#create">https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#create</a> for field definitions.</p>
+</dd>
+<dt><a href="#TrackerMap">TrackerMap</a> : <code>object</code></dt>
+<dd><p>Literal object containing key-value pairs of tracker maps. Each property key is a logical &quot;friendly&quot; tracker name that developers will use in code. Each property value is the actual tracking ID (e.g. &quot;UA-XXXX-Y...&quot;).</p>
 </dd>
 <dt><a href="#DimensionMap">DimensionMap</a> : <code>object</code></dt>
 <dd><p>Literal object containing key-value pairs of custom GA dimension maps. Each property key is a logical &quot;friendly&quot; dimension name that developers will use in code. Each property value is the actual GA dimension name (e.g. dimension14).</p>
@@ -54,7 +57,7 @@
 <a name="init"></a>
 
 # init(options)
-Initializes a tracker in GA and wires-up automated features of Sparga.
+Initializes one or more trackers in GA and wires-up automated features of Sparga.
 
 **Kind**: global function  
 
@@ -70,33 +73,35 @@ Pass-thru method for the GA send command. For method signature, see https://deve
 **Kind**: global function  
 <a name="sendEvent"></a>
 
-# sendEvent(category, action, label, value)
+# sendEvent(category, action, label, value, [trackerNames])
 Helper method to send a hit of type "event" to GA.
 
 **Kind**: global function  
 
-| Param | Type |
-| --- | --- |
-| category | <code>string</code> | 
-| action | <code>string</code> | 
-| label | <code>string</code> | 
-| value | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| category | <code>string</code> |  |
+| action | <code>string</code> |  |
+| label | <code>string</code> |  |
+| value | <code>number</code> |  |
+| [trackerNames] | <code>array</code> | Provide if a trackerMap is being used and you only want a subset of trackers to receive this hit. |
 
 <a name="sendException"></a>
 
-# sendException(errMessage, wasFatal)
+# sendException(errMessage, wasFatal, [trackerNames])
 Helper method to send a hit of type "exception" to GA.
 
 **Kind**: global function  
 
-| Param | Type |
-| --- | --- |
-| errMessage | <code>string</code> | 
-| wasFatal | <code>boolean</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| errMessage | <code>string</code> |  |
+| wasFatal | <code>boolean</code> |  |
+| [trackerNames] | <code>array</code> | Provide if a trackerMap is being used and you only want a subset of trackers to receive this hit. |
 
 <a name="sendSocial"></a>
 
-# sendSocial(network, action, target)
+# sendSocial(network, action, target, [trackerNames])
 Helper method to send a hit of type "social" to GA.
 
 **Kind**: global function  
@@ -106,10 +111,11 @@ Helper method to send a hit of type "social" to GA.
 | network | <code>string</code> | The social networking site (e.g. Facebook) |
 | action | <code>string</code> | The social action (e.g. like) |
 | target | <code>string</code> | The subject of the action (e.g. name of post, URL, etc.) |
+| [trackerNames] | <code>array</code> | Provide if a trackerMap is being used and you only want a subset of trackers to receive this hit. |
 
 <a name="sendTiming"></a>
 
-# sendTiming(category, variable, label, startOrDuration, [stop])
+# sendTiming(category, variable, label, startOrDuration, [stop], [trackerNames])
 Helper method to send a hit of type "timing" to GA.
 
 **Kind**: global function  
@@ -121,10 +127,11 @@ Helper method to send a hit of type "timing" to GA.
 | label | <code>string</code> |  |
 | startOrDuration | <code>date</code> \| <code>number</code> | Either a Date object depicting the start of an operation that is being timed OR an integer depicting the elapsed duration of the respective operation |
 | [stop] | <code>date</code> | An optional Date object depicting the end of an operation that is being timed. |
+| [trackerNames] | <code>array</code> | Provide if a trackerMap is being used and you only want a subset of trackers to receive this hit. |
 
 <a name="setDimension"></a>
 
-# setDimension(name, value)
+# setDimension(name, value, [trackerNames])
 Helper method to set a custom dimension in GA.
 
 **Kind**: global function  
@@ -133,10 +140,11 @@ Helper method to set a custom dimension in GA.
 | --- | --- | --- |
 | name | <code>string</code> | Logical "friendly" name of the custom dimension. Refer to @DimensionMap for more information. |
 | value | <code>string</code> | The value to set the dimension to for respective tracker session. |
+| [trackerNames] | <code>array</code> | Provide if a trackerMap is being used and you only want a subset of trackers to receive this dimension. |
 
 <a name="setMetric"></a>
 
-# setMetric(name, value)
+# setMetric(name, value, [trackerNames])
 Helper method to set a custom metric in GA.
 
 **Kind**: global function  
@@ -145,6 +153,7 @@ Helper method to set a custom metric in GA.
 | --- | --- | --- |
 | name | <code>string</code> | Logical "friendly" name of the custom metric. Refer to @MetricMap for more information. |
 | value | <code>number</code> | The value to set the metric to for respective tracker session. |
+| [trackerNames] | <code>array</code> | Provide if a trackerMap is being used and you only want a subset of trackers to receive this metric. |
 
 <a name="GASettings"></a>
 
@@ -163,6 +172,19 @@ Google Analytics settings object that determines values set at creation time for
 | siteSpeedSampleRate | <code>number</code> | <code>100</code> |  |
 | storeGac | <code>boolean</code> | <code>false</code> |  |
 
+<a name="TrackerMap"></a>
+
+# TrackerMap : <code>object</code>
+Literal object containing key-value pairs of tracker maps. Each property key is a logical "friendly" tracker name that developers will use in code. Each property value is the actual tracking ID (e.g. "UA-XXXX-Y...").
+
+**Kind**: global typedef  
+**Example** *(For example)*  
+```js
+{
+   myWebProperty1: 'UA-XXXX-Y',
+   myWebProperty2: 'UA-XXXX-Z'
+}
+```
 <a name="DimensionMap"></a>
 
 # DimensionMap : <code>object</code>
@@ -203,6 +225,7 @@ Options object used when initializing Sparga.
 | --- | --- | --- |
 | autoCaptureClickEvents | <code>boolean</code> | Determines whether or not all mouse click events are automatically captured and sent to GA. |
 | gaSettings | [<code>GASettings</code>](#GASettings) \| <code>string</code> | Either an object literal that defines the "GA create" settings OR your GA tracking ID (e.g. "UA-XXXX-Y..."). |
+| trackerMap | [<code>TrackerMap</code>](#TrackerMap) | Defines map of multiple trackers that developers can use. |
 | dimensionMap | [<code>DimensionMap</code>](#DimensionMap) | Defines map of custom GA dimensions that developers can use. |
 | metricMap | [<code>MetricMap</code>](#MetricMap) | Defines map of custom GA metrics that developers can use. |
 

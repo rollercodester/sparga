@@ -14,6 +14,16 @@
  * @property {boolean} [storeGac=false]
  */
 
+ /**
+ * Literal object containing key-value pairs of tracker maps. Each property key is a logical "friendly" tracker name that developers will use in code. Each property value is the actual tracking ID (e.g. "UA-XXXX-Y...").
+ * @typedef {object} TrackerMap
+ * @example <caption>For example</caption>
+ * {
+ *    myWebProperty1: 'UA-XXXX-Y',
+ *    myWebProperty2: 'UA-XXXX-Z'
+ * }
+ */
+
 /**
  * Literal object containing key-value pairs of custom GA dimension maps. Each property key is a logical "friendly" dimension name that developers will use in code. Each property value is the actual GA dimension name (e.g. dimension14).
  * @typedef {object} DimensionMap
@@ -41,6 +51,7 @@
  * @typedef {object} SpargaOptions
  * @property {boolean} autoCaptureClickEvents - Determines whether or not all mouse click events are automatically captured and sent to GA.
  * @property {GASettings|string} gaSettings - Either an object literal that defines the "GA create" settings OR your GA tracking ID (e.g. "UA-XXXX-Y...").
+ * @property {TrackerMap} trackerMap - Defines map of multiple trackers that developers can use.
  * @property {DimensionMap} dimensionMap - Defines map of custom GA dimensions that developers can use.
  * @property {MetricMap} metricMap - Defines map of custom GA metrics that developers can use.
  */
@@ -48,7 +59,7 @@
 export default class Sparga {
 
    /**
-    * Initializes a tracker in GA and wires-up automated features of Sparga.
+    * Initializes one or more trackers in GA and wires-up automated features of Sparga.
     * @param {SpargaOptions|string} options - Specifies initialization settings for Sparga or your GA tracking ID.
     */
    init(options) {
@@ -67,7 +78,7 @@ export default class Sparga {
 
       }
 
-      const { autoCaptureClickEvents = false, dimensionMap = {}, metricMap = {} } = options
+      const { autoCaptureClickEvents = false, dimensionMap = {}, metricMap = {}, trackerMap } = options
       let { gaSettings } = options
 
       if (typeof gaSettings === 'string') {
@@ -83,9 +94,9 @@ export default class Sparga {
 
       }
 
-      if (!gaSettings|| typeof gaSettings.trackingId !== 'string') {
+      if ( (!gaSettings|| typeof gaSettings.trackingId !== 'string') && (!trackerMap || !this.__isPlainObject(trackerMap)) )  {
 
-         throw new Error('Sparga must be initialized with options.gaSettings either being a literal object or a string containing a GA tracking ID (e.g. "UA-XXXX-Y..."). Refer to the Readme.md file for more information.')
+         throw new Error('Sparga must be initialized with options.gaSettings either being a literal object or a string containing a GA tracking ID (e.g. "UA-XXXX-Y..."), OR a map of trackers must be provided using options.trackerMap. Refer to the Readme.md file for more information.')
 
       }
 
@@ -101,16 +112,14 @@ export default class Sparga {
          storeGac: false
       }, gaSettings)
 
-      // set the GA command names based on whether
-      // or not a custom tracker name was initialized
-      this.sendCommand = gaSettings.name ? `${gaSettings.name}.send` : 'send'
-      this.setCommand = gaSettings.name ? `${gaSettings.name}.set` : 'set'
+      // make sure there is no name property supplied
+      delete gaSettings.name
 
       //
-      // store the custom metric/dimension
-      // maps that will support the respective
-      // set functions exposed by spaga
+      // store the maps that will support
+      // set/send functions exposed by spaga
       //
+      this.trackerMap = trackerMap
       this.dimensionMap = dimensionMap
       this.metricMap = metricMap
 
@@ -123,10 +132,49 @@ export default class Sparga {
 
             this.__initGa()
 
-            //
-            // initialize GA (one-time only)
-            //
-            window.ga('create', gaSettings)
+            if (this.trackerMap) {
+
+               const alphaOnlyRegex = /^[a-z0-9]+$/i
+               const { cookieDomain } = gaSettings
+
+               if (gaSettings.trackingId) {
+
+                  console.warn('The options.gaSettings.trackingId was supplied in addition to options.trackerMap; Sparga will only use the trackerMap and will ignore the gaSettings.trackingId.')
+
+               }
+
+               delete gaSettings.trackingId
+               delete gaSettings.name
+
+               //
+               // initialize GA for each provided tracker
+               //
+
+               const trackerNames = Object.keys(this.trackerMap)
+
+               for (const trackerName of trackerNames) {
+
+                  if (alphaOnlyRegex.test(trackerName)) {
+
+                     const trackerId = this.trackerMap[trackerName]
+                     window.ga('create', trackerId, cookieDomain, trackerName, gaSettings)
+
+                  } else {
+
+                     throw new Error(`The tracker name "${trackerName}" is invalid. Only alphanumeric characters are allowed with no spaces.`)
+
+                  }
+
+               }
+
+            } else {
+
+               //
+               // initialize GA using provided gaSettings
+               //
+               window.ga('create', gaSettings)
+
+            }
 
             this.__initHistoryListener()
 
@@ -145,7 +193,7 @@ export default class Sparga {
     */
    send() {
 
-      window.ga(this.sendCommand, arguments)
+      this.__send(arguments)
 
    }
 
@@ -155,18 +203,20 @@ export default class Sparga {
     * @param {string} action
     * @param {string} label
     * @param {number} value
+    * @param {array=} trackerNames - Provide if a trackerMap is being used and you only want a subset of trackers to receive this hit.
     */
-   sendEvent(category, action, label, value) {
+   sendEvent(category, action, label, value, trackerNames) {
 
       const trueValue = parseInt(value)
-
-      window.ga(this.sendCommand, {
+      const sendObject = {
          hitType: 'event',
          eventCategory: category,
          eventAction: action,
          eventLabel: label,
          eventValue: isNaN(trueValue) ? undefined : trueValue
-      })
+      }
+
+      this.__send(sendObject, trackerNames)
 
    }
 
@@ -174,14 +224,17 @@ export default class Sparga {
     * Helper method to send a hit of type "exception" to GA.
     * @param {string} errMessage
     * @param {boolean} wasFatal
+    * @param {array=} trackerNames - Provide if a trackerMap is being used and you only want a subset of trackers to receive this hit.
     */
-   sendException(errMessage, wasFatal) {
+   sendException(errMessage, wasFatal, trackerNames) {
 
-      window.ga(this.sendCommand, {
+      const sendObject = {
          hitType: 'exception',
          exDescription: errMessage,
          exFatal: wasFatal
-      })
+      }
+
+      this.__send(sendObject, trackerNames)
 
    }
 
@@ -190,15 +243,18 @@ export default class Sparga {
     * @param {string} network - The social networking site (e.g. Facebook)
     * @param {string} action - The social action (e.g. like)
     * @param {string} target - The subject of the action (e.g. name of post, URL, etc.)
+    * @param {array=} trackerNames - Provide if a trackerMap is being used and you only want a subset of trackers to receive this hit.
     */
-   sendSocial(network, action, target) {
+   sendSocial(network, action, target, trackerNames) {
 
-      window.ga(this.sendCommand, {
+      const sendObject = {
          hitType: 'social',
          socialNetwork: network,
          socialAction: action,
          socialTarget: target
-      })
+      }
+
+      this.__send(sendObject, trackerNames)
 
    }
 
@@ -209,11 +265,19 @@ export default class Sparga {
     * @param {string} label
     * @param {date|number} startOrDuration - Either a Date object depicting the start of an operation that is being timed OR an integer depicting the elapsed duration of the respective operation
     * @param {date=} stop - An optional Date object depicting the end of an operation that is being timed.
+    * @param {array=} trackerNames - Provide if a trackerMap is being used and you only want a subset of trackers to receive this hit.
     */
-   sendTiming(category, variable, label, startOrDuration, stop) {
+   sendTiming(category, variable, label, startOrDuration, stop, trackerNames) {
 
       let wasSent = false
       let duration
+
+      if (!trackerNames && stop instanceof Array) {
+
+         trackerNames = stop
+         stop = null
+
+      }
 
       if (startOrDuration instanceof Date) {
 
@@ -233,13 +297,15 @@ export default class Sparga {
 
       if (duration) {
 
-         window.ga(this.sendCommand, {
+         const sendObject = {
             hitType: 'timing',
             timingCategory: category,
             timingVar: variable,
             timingValue: duration,
             timingLabel: label
-         })
+         }
+
+         this.__send(sendObject, trackerNames)
 
          wasSent = true
 
@@ -257,15 +323,15 @@ export default class Sparga {
     * Helper method to set a custom dimension in GA.
     * @param {string} name - Logical "friendly" name of the custom dimension. Refer to @DimensionMap for more information.
     * @param {string} value - The value to set the dimension to for respective tracker session.
+    * @param {array=} trackerNames - Provide if a trackerMap is being used and you only want a subset of trackers to receive this dimension.
     */
-   setDimension(name, value) {
+   setDimension(name, value, trackerNames) {
 
       let wasSet = false
 
-      if (this.dimensionMap.hasOwnProperty(name)) {
+      if (this.dimensionMap && this.dimensionMap.hasOwnProperty(name)) {
 
-         window.ga(this.setCommand, this.dimensionMap[name], value)
-
+         this.__set(this.dimensionMap[name], value, trackerNames)
          wasSet = true
 
       } else {
@@ -282,19 +348,19 @@ export default class Sparga {
     * Helper method to set a custom metric in GA.
     * @param {string} name - Logical "friendly" name of the custom metric. Refer to @MetricMap for more information.
     * @param {number} value - The value to set the metric to for respective tracker session.
+    * @param {array=} trackerNames - Provide if a trackerMap is being used and you only want a subset of trackers to receive this metric.
     */
-   setMetric(name, value) {
+   setMetric(name, value, trackerNames) {
 
       let wasSet = false
 
-      if (this.metricMap.hasOwnProperty(name)) {
+      if (this.metricMap && this.metricMap.hasOwnProperty(name)) {
 
          const trueValue = typeof value === 'number' ? value : parseFloat(value)
 
          if (!isNaN(trueValue)) {
 
-            window.ga(this.setCommand, this.metricMap[name], value)
-
+            this.__set(this.metricMap[name], value, trackerNames)
             wasSet = true
 
          } else {
@@ -400,7 +466,7 @@ export default class Sparga {
       // won't trigger a pushState, go
       // ahead and send a pageview hit
       //
-      window.ga(this.sendCommand, {
+      this.__send({
          hitType: 'pageview',
          page: location.pathname
       })
@@ -415,10 +481,70 @@ export default class Sparga {
 
          pushState.apply(history, arguments)
 
-         window.ga(ref.sendCommand, {
+         ref.__send({
             hitType: 'pageview',
             page: location.pathname
          })
+
+      }
+
+   }
+
+   __isPlainObject(val) {
+      return val ? val.constructor === {}.constructor : false
+   }
+
+   __send(options, trackerNames) {
+
+      if (trackerNames || this.trackerMap) {
+
+         trackerNames = trackerNames || Object.keys(this.trackerMap)
+
+         for (const trackerName of trackerNames) {
+
+            if (this.trackerMap && this.trackerMap.hasOwnProperty(trackerName)) {
+
+                window.ga(`${trackerName}.send`, options)
+
+            } else {
+
+               console.warn(`A send call was ignored because the provided trackerName ${trackerName} was not found in the provided trackerMap.`)
+
+            }
+
+         }
+
+      } else {
+
+         window.ga('send', options)
+
+      }
+
+   }
+
+   __set(property, value, trackerNames) {
+
+      if (trackerNames || this.trackerMap) {
+
+         trackerNames = trackerNames || Object.keys(this.trackerMap)
+
+         for (const trackerName of trackerNames) {
+
+            if (this.trackerMap && this.trackerMap.hasOwnProperty(trackerName)) {
+
+               window.ga(`${trackerName}.set`, property, value)
+
+            } else {
+
+               console.warn(`A set call was ignored because the provided trackerName ${trackerName} was not found in the provided trackerMap.`)
+
+            }
+
+         }
+
+      } else {
+
+         window.ga('set', property, value)
 
       }
 

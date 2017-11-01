@@ -20,7 +20,8 @@
    * [Automatic click-streaming](#example2)
    * [Custom dimensions](#example3)
    * [Custom metrics](#example4)
-   * [Native GA Settings (e.g. custom tracker)](#example5)
+   * [Multiple Tracking Ids (i.e. multiple named trackers)](#example5)
+   * [Native GA Settings (e.g. custom tracker)](#example6)
 * [Default GA Settings](#defaultGaSettings)
 * [Other Helper Functions](#otherHelperFunctions)
 
@@ -76,6 +77,8 @@ sparga.init({
 <a name="example3"></a>
 ### Setting custom dimensions using developer friendly logical names
 
+For more info, refer to the [GA Field Reference](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs)
+
 ```javascript
 
 const sparga = new Sparga()
@@ -88,8 +91,6 @@ sparga.init({
    // number of custom dimensions, depending on your
    // account type...as such, this map is usually
    // defined once and used many times for an organization
-   //
-   // For more info, see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs
    //
    dimensionMap: {
       variantTestName: 'dimension1',
@@ -106,6 +107,8 @@ sparga.setDimension('userRole', 'non-admin')
 <a name="example4"></a>
 ### Setting custom metrics using developer friendly logical names
 
+For more info, refer to the [GA Field Reference](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs)
+
 ```javascript
 
 const sparga = new Sparga()
@@ -118,8 +121,6 @@ sparga.init({
    // number of custom metrics, depending on your
    // account type...as such, this map is usually
    // defined once and used many times for an organization
-   //
-   // For more info, see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#customs
    //
    metricMap: {
       isNewUser: 'metric6',
@@ -134,6 +135,50 @@ sparga.setMetric('isViewSetAsPersistent', 1)
 ```
 
 <a name="example5"></a>
+### Using multiple tracking IDs (i.e. multiple named trackers)
+
+Sometimes a site/page needs to report to multiple tracking IDs, which is only possible if named trackers are used.
+
+```javascript
+
+const sparga = new Sparga()
+
+// NOTE: If a trackerMap is provided, then the
+// gaSetting.trackingId will be ignored.
+
+sparga.init({
+   gaSettings: {
+      trackingId: 'THIS WILL NOW BE IGNORED!'
+   },
+   trackerMap: {
+      myTracker1: 'UA-123456-7',
+      myTracker2: 'UA-123456-8',
+      myTracker3: 'UA-123456-9'
+   }
+})
+
+//
+// Now all of the above tracking IDs will be sent pageview
+// and exception events.
+//
+// Additionally, all of the Sparga helper methods will also
+// use the above tracking IDs--or a subset of them, if specified
+//
+
+// send a custom event to ALL trackers (i.e. all tracking IDs)
+sparga.sendEvent(
+   'MyCategory-1', 'MyAction-1', 'MyLabel-1', 'MyValue-1'
+)
+
+// send a custom event to only TWO of the three trackers
+sparga.sendEvent(
+   'MyCategory-2', 'MyAction-2', 'MyLabel-2', 'MyValue-2',
+   [ 'myTracker1', 'myTracker3']
+)
+
+```
+
+<a name="example6"></a>
 ### Using native GA settings
 
 All native options for creating a GA tracking session are exposed via the gaSettings property on Sparga's intitialization object. The following example shows how to create a custom tracker by initializing with a gaSettings object.
@@ -145,21 +190,12 @@ const sparga = new Sparga()
 sparga.init({
    gaSettings: {
       trackingId: 'UA-123456-7',
-      name: 'My Tracker'
-   },
-   metricMap: {
-      isNewUser: 'metric6',
-      isUserAdmin: 'metric8',
-      isViewSetAsPersistent: 'metric14'
+      userId: 'user123',
+      sessionControl: 'start',
+      cookieExpires: 86400
    }
 })
 
-//
-// set custom metrics on the "My Tracker" tracker
-//
-sparga.setMetric('isNewUser', 1)
-sparga.setMetric('isUserAdmin', 0)
-sparga.setMetric('isViewSetAsPersistent', 1)
 ```
 
 <a name="defaultGaSettings"></a>
