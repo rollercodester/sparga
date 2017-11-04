@@ -49,11 +49,13 @@
 /**
  * Options object used when initializing Sparga.
  * @typedef {object} SpargaOptions
- * @property {boolean} autoCaptureClickEvents - Determines whether or not all mouse click events are automatically captured and sent to GA.
+ * @property {boolean=true} autoCapturePageviews - Determines whether or not all page views are automatically captured and sent to GA.
+ * @property {boolean=true} autoCaptureExceptions - Determines whether or not all JavaScript exceptions are automatically captured and sent to GA.
+ * @property {boolean=false} autoCaptureClickEvents - Determines whether or not all mouse click events are automatically captured and sent to GA.
  * @property {GASettings|string} gaSettings - Either an object literal that defines the "GA create" settings OR your GA tracking ID (e.g. "UA-XXXX-Y...").
- * @property {TrackerMap} trackerMap - Defines map of multiple trackers that developers can use.
- * @property {DimensionMap} dimensionMap - Defines map of custom GA dimensions that developers can use.
- * @property {MetricMap} metricMap - Defines map of custom GA metrics that developers can use.
+ * @property {TrackerMap=} trackerMap - Defines map of multiple trackers that developers can use.
+ * @property {DimensionMap=} dimensionMap - Defines map of custom GA dimensions that developers can use.
+ * @property {MetricMap=} metricMap - Defines map of custom GA metrics that developers can use.
  */
 
 export default class Sparga {
@@ -78,7 +80,7 @@ export default class Sparga {
 
       }
 
-      const { autoCaptureClickEvents = false, dimensionMap = {}, metricMap = {}, trackerMap } = options
+      const { autoCaptureClickEvents = false, autoCaptureExceptions = true, autoCapturePageviews = true, dimensionMap = {}, metricMap = {}, trackerMap } = options
       let { gaSettings } = options
 
       if (typeof gaSettings === 'string') {
@@ -123,7 +125,7 @@ export default class Sparga {
       this.dimensionMap = dimensionMap
       this.metricMap = metricMap
 
-      this.__initExceptionListener()
+      this.__initExceptionListener(autoCaptureExceptions)
       this.__initClickListener(autoCaptureClickEvents)
 
       if (typeof window !== 'undefined') {
@@ -176,7 +178,7 @@ export default class Sparga {
 
             }
 
-            this.__initHistoryListener()
+            this.__initHistoryListener(autoCapturePageviews)
 
          }
 
@@ -235,6 +237,19 @@ export default class Sparga {
       }
 
       this.__send(sendObject, trackerNames)
+
+   }
+
+   /**
+    * Helper method to send a hit of type "pageview" to GA.
+    * @param {string} pageView
+    */
+   sendPageView(pageView) {
+
+      this.__send({
+         hitType: 'pageview',
+         page: pageView
+      })
 
    }
 
@@ -426,20 +441,23 @@ export default class Sparga {
 
    }
 
-   __initExceptionListener() {
+   __initExceptionListener(autoCaptureExceptions) {
 
-      const ref = this
+      if (autoCaptureExceptions) {
 
-      //
-      // wire up a listener to capture all
-      // unhandled JavaScript exceptions so
-      // they can be sent to GA
-      //
+         const ref = this
 
-      window.onerror = function(msg, url, line, col, error) {
+         //
+         // wire up a listener to capture all
+         // unhandled JavaScript exceptions so
+         // they can be sent to GA
+         //
+         window.onerror = function(msg, url, line, col, error) {
 
-         const formattedError = `Error: ${msg}${url ? `\nURL: ${url}` : ''}${line ? `\nLine: ${line}` : ''}${col ? `\nColumn: ${col}` : ''}`
-         ref.sendException(formattedError)
+            const formattedError = `Error: ${msg}${url ? `\nURL: ${url}` : ''}${line ? `\nLine: ${line}` : ''}${col ? `\nColumn: ${col}` : ''}`
+            ref.sendException(formattedError)
+
+         }
 
       }
 
@@ -457,34 +475,31 @@ export default class Sparga {
 
    }
 
-   __initHistoryListener() {
+   __initHistoryListener(autoCapturePageviews) {
 
-      const ref = this
+      if (autoCapturePageviews) {
 
-      //
-      // since the initial load of a SPA
-      // won't trigger a pushState, go
-      // ahead and send a pageview hit
-      //
-      this.__send({
-         hitType: 'pageview',
-         page: location.pathname
-      })
+         const ref = this
 
-      //
-      // monkey-patch pushState to create a history listener
-      // to capture all view changes so that pageview events
-      // can be automatically sent to GA
-      //
-      const pushState = history.pushState
-      history.pushState = function() {
+         //
+         // since the initial load of a SPA
+         // won't trigger a pushState, go
+         // ahead and send a pageview hit
+         //
+         ref.sendPageView(location.pathname)
 
-         pushState.apply(history, arguments)
+         //
+         // monkey-patch pushState to create a history listener
+         // to capture all view changes so that pageview events
+         // can be automatically sent to GA
+         //
+         const pushState = history.pushState
+         history.pushState = function() {
 
-         ref.__send({
-            hitType: 'pageview',
-            page: location.pathname
-         })
+            pushState.apply(history, arguments)
+            ref.sendPageView(location.pathname)
+
+         }
 
       }
 

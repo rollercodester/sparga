@@ -54,6 +54,12 @@ sparga.init('UA-123456-7')
 // Additionally, all unhandled JavaScript
 // exceptions will also be tracked.
 //
+// NOTE: Automatic tracking of page views
+// and JavaScript exceptions can be turned
+// off by setting respective flags to false
+// on the options object. See the API docs
+// for specifics.
+//
 ```
 
 <a name="example2"></a>
@@ -215,6 +221,7 @@ Sparga sets the following GA settings by default, which are different than the d
 ## Other Helper Functions
 
 * sendEvent
+* sendPageView
 * sendException
 * sendSocial
 * sendTiming
