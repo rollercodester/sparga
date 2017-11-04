@@ -49,9 +49,9 @@
 /**
  * Options object used when initializing Sparga.
  * @typedef {object} SpargaOptions
- * @property {boolean=true} autoCapturePageviews - Determines whether or not all page views are automatically captured and sent to GA.
- * @property {boolean=true} autoCaptureExceptions - Determines whether or not all JavaScript exceptions are automatically captured and sent to GA.
- * @property {boolean=false} autoCaptureClickEvents - Determines whether or not all mouse click events are automatically captured and sent to GA.
+ * @property {boolean} [autoCapturePageviews=true] - Determines whether or not all page views are automatically captured and sent to GA.
+ * @property {boolean} [autoCaptureExceptions=true] - Determines whether or not all JavaScript exceptions are automatically captured and sent to GA.
+ * @property {boolean} [autoCaptureClickEvents=false] - Determines whether or not all mouse click events are automatically captured and sent to GA.
  * @property {GASettings|string} gaSettings - Either an object literal that defines the "GA create" settings OR your GA tracking ID (e.g. "UA-XXXX-Y...").
  * @property {TrackerMap=} trackerMap - Defines map of multiple trackers that developers can use.
  * @property {DimensionMap=} dimensionMap - Defines map of custom GA dimensions that developers can use.

@@ -20,6 +20,9 @@
 <dt><a href="#sendException">sendException(errMessage, wasFatal, [trackerNames])</a></dt>
 <dd><p>Helper method to send a hit of type &quot;exception&quot; to GA.</p>
 </dd>
+<dt><a href="#sendPageView">sendPageView(pageView)</a></dt>
+<dd><p>Helper method to send a hit of type &quot;pageview&quot; to GA.</p>
+</dd>
 <dt><a href="#sendSocial">sendSocial(network, action, target, [trackerNames])</a></dt>
 <dd><p>Helper method to send a hit of type &quot;social&quot; to GA.</p>
 </dd>
@@ -98,6 +101,17 @@ Helper method to send a hit of type "exception" to GA.
 | errMessage | <code>string</code> |  |
 | wasFatal | <code>boolean</code> |  |
 | [trackerNames] | <code>array</code> | Provide if a trackerMap is being used and you only want a subset of trackers to receive this hit. |
+
+<a name="sendPageView"></a>
+
+# sendPageView(pageView)
+Helper method to send a hit of type "pageview" to GA.
+
+**Kind**: global function  
+
+| Param | Type |
+| --- | --- |
+| pageView | <code>string</code> | 
 
 <a name="sendSocial"></a>
 
@@ -221,13 +235,15 @@ Options object used when initializing Sparga.
 **Kind**: global typedef  
 **Properties**
 
-| Name | Type | Description |
-| --- | --- | --- |
-| autoCaptureClickEvents | <code>boolean</code> | Determines whether or not all mouse click events are automatically captured and sent to GA. |
-| gaSettings | [<code>GASettings</code>](#GASettings) \| <code>string</code> | Either an object literal that defines the "GA create" settings OR your GA tracking ID (e.g. "UA-XXXX-Y..."). |
-| trackerMap | [<code>TrackerMap</code>](#TrackerMap) | Defines map of multiple trackers that developers can use. |
-| dimensionMap | [<code>DimensionMap</code>](#DimensionMap) | Defines map of custom GA dimensions that developers can use. |
-| metricMap | [<code>MetricMap</code>](#MetricMap) | Defines map of custom GA metrics that developers can use. |
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| autoCapturePageviews | <code>boolean</code> | <code>true</code> | Determines whether or not all page views are automatically captured and sent to GA. |
+| autoCaptureExceptions | <code>boolean</code> | <code>true</code> | Determines whether or not all JavaScript exceptions are automatically captured and sent to GA. |
+| autoCaptureClickEvents | <code>boolean</code> | <code>false</code> | Determines whether or not all mouse click events are automatically captured and sent to GA. |
+| gaSettings | [<code>GASettings</code>](#GASettings) \| <code>string</code> |  | Either an object literal that defines the "GA create" settings OR your GA tracking ID (e.g. "UA-XXXX-Y..."). |
+| trackerMap | [<code>TrackerMap</code>](#TrackerMap) |  | Defines map of multiple trackers that developers can use. |
+| dimensionMap | [<code>DimensionMap</code>](#DimensionMap) |  | Defines map of custom GA dimensions that developers can use. |
+| metricMap | [<code>MetricMap</code>](#MetricMap) |  | Defines map of custom GA metrics that developers can use. |
 
 
 
